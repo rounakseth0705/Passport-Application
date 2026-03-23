@@ -8,22 +8,48 @@ export const UserContext = createContext();
 const UserContextProvider = ({ children }) => {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
-    const sendOtp = async () => {
+    const [isUserVerifying, setIsUserVerifying] = useState(false);
+    const [language, setLanguage] = useState("english");
+    const sendOtp = async (userEmail) => {
         try {
-            const response = await API.get(`/send-otp/${email}`);
+            setEmail(userEmail);
+            setIsUserVerifying(true);
+            const response = await API.get(`/send-otp/${userEmail}`);
             if (response) {
                 if (response.data.success) {
                 
+                } else {
+                    setEmail("");
+                    setIsUserVerifying(false);
+                }
+            } else {
+                setEmail("");
+                setIsUserVerifying(false);
+            }
+        } catch(error) {
+
+        }
+    }
+    const verifyUser = async (otp) => {
+        try {
+            const response = await API.post("/verify-user", { otp });
+            if (response) {
+                if (response.data.success) {
+                    if (response.data.isUserExists) {
+                        setEmail("");
+                    } else {
+                        
+                    }
+                    setIsUserVerifying(false);
+                } else {
+
                 }
             }
         } catch(error) {
 
         }
     }
-    const verifyUser = async () => {
-
-    }
-    const value = { sendOtp, setEmail, verifyUser }
+    const value = { sendOtp, verifyUser, isUserVerifying, language, setLanguage }
     return(
         <UserContext.Provider value={value}>
             {children}

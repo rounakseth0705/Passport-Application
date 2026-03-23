@@ -1,12 +1,14 @@
 import { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { UserContext } from "../context/UserContext.jsx";
+import { useRef } from "react";
 
 const LoginPage = () => {
-    const { setEmail, sendOtp } = useContext(UserContext);
+    const { sendOtp, isUserVerifying } = useContext(UserContext);
+    const sendButton = useRef(null);
     const { register, handleSubmit, formState: { errors } } = useForm({ mode: "onBlur" });
-    const submitForm = (data) => {
-        console.log(data);
+    const submitForm = async (data) => {
+        await sendOtp(data.email);
     }
     return(
         <div className="flex flex-col h-screen gap-12 lg:flex-row lg:gap-6 xl:gap-10">
@@ -34,19 +36,26 @@ const LoginPage = () => {
             </div>
             <div className="flex justify-center items-center w-screen lg:w-[25vw] lg:justify-start">
                 <form onSubmit={handleSubmit(submitForm)} className="flex flex-col justify-center items-center gap-6 bg-gray-100 shadow-lg rounded-2xl py-9 px-5">
-                    <div className="flex flex-col justify-center items-center lg:items-start">
-                        <label htmlFor="mobileNo" className="text-3xl mx-5 my-3 text-slate-800 font-semibold sm:text-4xl lg:text-3xl">Email ID</label>
-                        <input {...register("email",{
-                        required: "Email ID is required",
-                        pattern: {
-                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                            message: "Enter a valid Email Id"
-                        }
-                    })} placeholder="enter your email, e.g. abc@gmail.com" className="px-6 py-4 w-[50vw] bg-gray-200 rounded-4xl sm:w-[60vw] lg:w-[26vw] lg:px-4 xl:px-6"/>
-                    { errors.email && <span className="text-red-500 px-5">{errors.email.message}</span> }
-                    </div>
-                    <h1 className="text-slate-800">We'll send a one-time password to your email</h1>
-                    <button className="px-23 py-3 bg-slate-800 text-white cursor-pointer rounded-3xl hover:bg-slate-700 transition-all duration-500 ease-in-out">Get OTP</button>
+                    { !isUserVerifying ?
+                        <>
+                            <div className="flex flex-col justify-center items-center lg:items-start">
+                                <label htmlFor="mobileNo" className="text-3xl mx-5 my-3 text-slate-800 font-semibold sm:text-4xl lg:text-3xl">Email ID</label>
+                                <input {...register("email",{
+                                    required: "Email ID is required",
+                                    pattern: {
+                                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                        message: "Enter a valid Email Id"
+                                    }
+                                })} placeholder="enter your email, e.g. abc@gmail.com" className="px-6 py-4 w-[50vw] bg-gray-200 rounded-4xl sm:w-[60vw] lg:w-[26vw] lg:px-4 xl:px-6"/>
+                                { errors.email && <span className="text-red-500 px-5">{errors.email.message}</span> }
+                            </div>
+                            <h1 className="text-slate-800">We'll send a one-time password to your email</h1>
+                        </> :
+                        <div>
+                            
+                        </div>
+                    }
+                    <button ref={sendButton} className="px-23 py-3 bg-slate-800 text-white cursor-pointer rounded-3xl hover:bg-slate-700 transition-all duration-500 ease-in-out">{isUserVerifying ? "Submit OTP" : "Get OTP"}</button>
                 </form>
             </div>
         </div>
