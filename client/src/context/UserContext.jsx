@@ -38,7 +38,7 @@ const UserContextProvider = ({ children }) => {
                     if (response.data.isUserExists) {
                         setEmail("");
                     } else {
-                        
+                        navigate("onboarding");
                     }
                     setIsUserVerifying(false);
                 } else {

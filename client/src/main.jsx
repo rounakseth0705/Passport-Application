@@ -4,6 +4,7 @@ import App from './App.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import LoginPage from './pages/LoginPage.jsx';
 import Onboarding from './pages/Onboarding.jsx';
+import UserDashboard from './pages/UserDashboard.jsx';
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
       {
         path: "onboarding",
         element: <Onboarding/>
+      },
+      {
+        path: "user-dashboard",
+        element: <UserDashboard/>
       }
     ]
   }
