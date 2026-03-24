@@ -1,9 +1,10 @@
 import express from "express";
-import { sendOtp, verifyUserFromOtp } from "../controllers/userControllers.js";
+import { checkOtp, sendOtp, verifyUser } from "../controllers/userControllers.js";
 
 const userRouter = express.Router();
 
-userRouter.get("/send-otp/:email", sendOtp);
-userRouter.post("/verify-user", verifyUserFromOtp);
+userRouter.post("/send-otp", sendOtp);
+userRouter.put("/check-otp", checkOtp);
+userRouter.put("/verify-user", verifyUser);
 
 export default userRouter;

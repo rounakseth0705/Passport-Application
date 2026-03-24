@@ -96,9 +96,9 @@ const Onboarding = () => {
                         <div className="flex justify-center items-start gap-3 mx-auto">
                             <h1 className="font-semibold">{language==="english" ? "Gender" : "लिंग"}</h1>
                             <select className="border p-1 rounded">
-                                <option value="male">{language==="english" ? "Male" : "पुरुष"}</option>
-                                <option value="female">{language==="english" ? "Female" : "महिला"}</option>
-                                <option value="other">{language==="english" ? "Other" : "अन्य"}</option>
+                                <option value="Male">{language==="english" ? "Male" : "पुरुष"}</option>
+                                <option value="Female">{language==="english" ? "Female" : "महिला"}</option>
+                                <option value="Other">{language==="english" ? "Other" : "अन्य"}</option>
                             </select>
                         </div>
                         <div className="mx-auto">
