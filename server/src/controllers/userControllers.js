@@ -1,5 +1,6 @@
 import transporter from "../config/nodemailer.js";
 import User from "../models/userModel.js";
+import jwt from "jsonwebtoken";
 
 export const sendOtp = async (req,res) => {
     try {
@@ -8,7 +9,7 @@ export const sendOtp = async (req,res) => {
             return res.json({ success: faalse, message: "Email missing" });
         }
         const isUserExists = await User.findOne({ email });
-        const otp = String(Math.floor(10000000 + Math.random() * 90000000));
+        const otp = String(Math.floor(1000 + Math.random() * 9000));
         const otpExpireAt = Date.now() + 5*60*1000;
         const mailOptions = {
             from: process.env.SENDER_EMAIL,
@@ -48,10 +49,11 @@ export const checkOtp = async (req,res) => {
         user.otpExpireAt = 0;
         const isVerified = user.isVerified;
         await user.save();
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
         if (isVerified) {
-            return res.json({ success: true, isVerified, message: "Welcome back to passport application" });
+            return res.json({ success: true, isVerified, token, message: "Welcome back to passport application" });
         }
-        return res.json({ success: true, isVerified, message: "Welcome to passport application" });
+        return res.json({ success: true, isVerified, token, message: "Welcome to passport application" });
     } catch(error) {
         console.log(error.message);
         return res.json({ success: false, message: error.message });
@@ -60,11 +62,12 @@ export const checkOtp = async (req,res) => {
 
 export const verifyUser = async (req,res) => {
     try {
-        const { name, mobile, gender, dob, email } = req.body;
-        if (!name || !mobile || !gender || !dob || !email) {
+        const { name, mobile, gender, dob } = req.body;
+        const userId = req.user._id;
+        if (!name || !mobile || !gender || !dob || !userId) {
             return res.json({ success: false, message: "Details Missing" });
         }
-        const user = await User.findOne({ email });
+        const user = await User.findById(userId);
         if (!user) {
             return res.json({ success: false, message: "Something went wrong!" });
         }
@@ -77,6 +80,19 @@ export const verifyUser = async (req,res) => {
         return res.json({ success: true, user, message: "Details saved" });
     } catch(error) {
         console.log(error.message);
+        return res.json({ success: false, message: error.message });
+    }
+}
+
+export const checkUser = async (req,res) => {
+    try {
+        const user = req.user;
+        if (!user) {
+            return res.json({ success: false, message: "User not logged in" });
+        }
+        return res.json({ success: true, user, message: "User details" });
+    } catch(error) {
+        console.loga(error.message);
         return res.json({ success: false, message: error.message });
     }
 }

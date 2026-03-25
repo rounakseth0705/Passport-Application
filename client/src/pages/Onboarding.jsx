@@ -8,18 +8,19 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 const Onboarding = () => {
-    const { language, setLanguage } = useContext(UserContext);
+    const { language, setLanguage, verifyUser } = useContext(UserContext);
     const navigate = useNavigate();
     const [hours, setHours] = useState(String(new Date().getHours()).padStart(2,"0"));
     const [minutes, setMinutes] = useState(String(new Date().getMinutes()).padStart(2,"0"));
     const [seconds, setSeconds] = useState(String(new Date().getSeconds()).padStart(2,"0"));
     const [meridiem, setMeridiem] = useState(getMeridiem());
+    const [gender, setGender] = useState("Male");
     const { register, handleSubmit, formState: { errors } } = useForm({ mode: "onBlur" });
     function getMeridiem() {
 
     }
-    const saveDetails = (data) => {
-        console.log(data);
+    const saveDetails = async (data) => {
+        await verifyUser(data.name,data.mobile,gender,data.dob);
     }
     useEffect(() => {
         const interval = setInterval(() => {
@@ -95,14 +96,14 @@ const Onboarding = () => {
                         </div>
                         <div className="flex justify-center items-start gap-3 mx-auto">
                             <h1 className="font-semibold">{language==="english" ? "Gender" : "लिंग"}</h1>
-                            <select className="border p-1 rounded">
+                            <select onChange={(event) => setGender(event.target.value)} className="border p-1 rounded">
                                 <option value="Male">{language==="english" ? "Male" : "पुरुष"}</option>
                                 <option value="Female">{language==="english" ? "Female" : "महिला"}</option>
                                 <option value="Other">{language==="english" ? "Other" : "अन्य"}</option>
                             </select>
                         </div>
                         <div className="mx-auto">
-                            <input type="date" {...register("date",{
+                            <input type="date" {...register("dob",{
                                 required: `${language==="english" ? "Date of Birth is required" : "जन्म तिथि आवश्यक है"}`
                             })} className="border p-1 rounded"/>
                         </div>

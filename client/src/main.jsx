@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import LoginPage from './pages/LoginPage.jsx';
 import Onboarding from './pages/Onboarding.jsx';
 import UserDashboard from './pages/UserDashboard.jsx';
+import ProtectRoute from './components/ProtectRoute.jsx';
 
 const router = createBrowserRouter([
   {
@@ -17,11 +18,15 @@ const router = createBrowserRouter([
       },
       {
         path: "onboarding",
-        element: <Onboarding/>
+        element: <ProtectRoute>
+          <Onboarding/>
+        </ProtectRoute>
       },
       {
         path: "user-dashboard",
-        element: <UserDashboard/>
+        element: <ProtectRoute>
+          <UserDashboard/>
+        </ProtectRoute>
       }
     ]
   }
