@@ -51,9 +51,9 @@ export const checkOtp = async (req,res) => {
         await user.save();
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
         if (isVerified) {
-            return res.json({ success: true, isVerified, token, message: "Welcome back to passport application" });
+            return res.json({ success: true, isVerified, user, token, message: "Welcome back to passport application" });
         }
-        return res.json({ success: true, isVerified, token, message: "Welcome to passport application" });
+        return res.json({ success: true, isVerified, user, token, message: "Welcome to passport application" });
     } catch(error) {
         console.log(error.message);
         return res.json({ success: false, message: error.message });

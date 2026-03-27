@@ -42,6 +42,7 @@ const UserContextProvider = ({ children }) => {
                 if (response.data.success) {
                     localStorage.setItem("token", response.data.token);
                     if (response.data.isVerified) {
+                        setUser(response.data.user);
                         navigate("user-dashboard");
                         toast.success(response.data.message);
                     } else {
@@ -65,6 +66,9 @@ const UserContextProvider = ({ children }) => {
         try {
             setIsLoggedIn(false);
             setUser(null);
+            localStorage.removeItem("token");
+            navigate("/");
+            toast.success("Logged out successfully");
         } catch(error) {
             toast.error(error.message);
         }
@@ -109,7 +113,7 @@ const UserContextProvider = ({ children }) => {
     useEffect(() => {
         checkUser();
     },[]);
-    const value = { sendOtp, verifyUser, isUserVerifying, language, setLanguage, checkOtp, user, isLoggedIn }
+    const value = { sendOtp, verifyUser, isUserVerifying, language, setLanguage, checkOtp, user, isLoggedIn, logout }
     return(
         <UserContext.Provider value={value}>
             {children}

@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage.jsx';
 import Onboarding from './pages/Onboarding.jsx';
 import UserDashboard from './pages/UserDashboard.jsx';
 import ProtectRoute from './components/ProtectRoute.jsx';
+import Application from './pages/Application.jsx';
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,12 @@ const router = createBrowserRouter([
         path: "user-dashboard",
         element: <ProtectRoute>
           <UserDashboard/>
+        </ProtectRoute>
+      },
+      {
+        path: "application",
+        element: <ProtectRoute>
+          <Application/>
         </ProtectRoute>
       }
     ]

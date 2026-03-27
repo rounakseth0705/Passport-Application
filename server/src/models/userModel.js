@@ -5,8 +5,7 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     mobile: { type: String },
     gender: { type: String, enum: ["Male","Female","Other"] },
-    dob: { type: Date,  },
-    city: { type: String },
+    dob: { type: Date },
     otp: { type: String, default: "" },
     otpExpireAt: { type: Date, default: 0 },
     isVerified: { type: Boolean, default: false }

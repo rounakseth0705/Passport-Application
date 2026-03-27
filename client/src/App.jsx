@@ -1,13 +1,16 @@
 import { Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import UserContextProvider from "./context/UserContext.jsx";
+import ApplicationContextProvider from "./context/ApplicationContext.jsx";
 
 const App = () => {
     return(
         <>
             <UserContextProvider>
-                <Toaster/>
-                <Outlet/>
+                <ApplicationContextProvider>
+                    <Toaster/>
+                    <Outlet/>
+                </ApplicationContextProvider>
             </UserContextProvider>
         </>
     )
