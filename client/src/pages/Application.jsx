@@ -9,6 +9,7 @@ import { useState } from "react";
 import angleRightArrow from "../assets/angleRightArrow.svg";
 import angleLeftArrow from "../assets/angleLeftArrow.svg";
 import { useNavigate } from "react-router-dom";
+import { useRef } from "react";
 
 const Application = () => {
     const { user } = useContext(UserContext);
@@ -17,12 +18,9 @@ const Application = () => {
     const [hours, setHours] = useState(String(new Date().getHours()).padStart(2,"0"));
     const [minutes, setMinutes] = useState(String(new Date().getMinutes()).padStart(2,"0"));
     const [seconds, setSeconds] = useState(String(new Date().getSeconds()).padStart(2,"0"));
-    const [meridiem, setMeridiem] = useState(getMeridiem());
+    const meridiem = useRef(hours < 12 ? "AM" : "PM");
     const navigate = useNavigate();
     const { register, handleSubmit, reset } = useForm({ defaultValues: "", mode: "onBlur" });
-    function getMeridiem() {
-
-    }
     const submitApplication = (data,event) => {
         const action = event.nativeEvent.submitter.name;
         if (action === "next") {
@@ -61,7 +59,7 @@ const Application = () => {
             <div className="flex justify-evenly items-center h-[8%] w-screen bg-gray-300">
                 <span className="flex justify-center items-center gap-3 md:ml-[1vw] md:gap-1 lg:gap-3 lg:ml-0">
                     <img src={clockIcon} alt="clockIcon" className="w-6 h-6 md:w-8 md:h-8 lg:w-6 lg:h-6"/>
-                    <h1 className="md:text-2xl lg:text-base">{new Date().toLocaleString("en-US", { weekday: "long" })}, {new Date().toLocaleString("en-US", { month: "long" })} {String(new Date().getDate()).padStart(2,"0")} {new Date().getFullYear()}, {hours}:{minutes}:{seconds} {meridiem}</h1>
+                    <h1 className="md:text-2xl lg:text-base">{new Date().toLocaleString("en-US", { weekday: "long" })}, {new Date().toLocaleString("en-US", { month: "long" })} {String(new Date().getDate()).padStart(2,"0")} {new Date().getFullYear()}, {hours}:{minutes}:{seconds} {meridiem.current}</h1>
                 </span>
                 <h1 onClick={() => navigate("/user-dashboard")} className="cursor-pointer hover:underline">Go back to dashboard</h1>
             </div>
@@ -69,7 +67,7 @@ const Application = () => {
                 <div className="flex flex-col justify-start w-[45vw] bg-linear-to-r from-blue-500 to-slate-950 text-white pl-[3vw]">
                     <h1 className="text-6xl font-semibold mt-[15vh]">Passport Application</h1>
                     <div className="mt-[5vh]">
-                        <h1 className="text-center">Step 1 of 4</h1>
+                        <h1 className="text-center">Step {step} of 4</h1>
                         <span className="flex justify-center items-center gap-2 mt-[2vh]">
                             { step === 1 ?
                                 <img src={filledDotIcon} alt="filledDotIcon" className="w-5 h-5"/> :
@@ -90,51 +88,69 @@ const Application = () => {
                         </span>
                     </div>
                 </div>
-                <div className="flex flex-col w-[55vw] pl-[5vw]">
-                    <h1 className="">Personal Details</h1>
-                    <h1 className="">Enter your personal information as per official records.</h1>
-                    <form onSubmit={handleSubmit(submitApplication)} className="flex flex-col items-center gap-8 rounded-2xl py-3 bg-gray-100 shadow-lg w-[40vw]">
-                        <div className="flex flex-col gap-5">
-                            <div className="flex flex-col justify-center items-start gap-1">
-                                <label htmlFor="name" className="pl-6">Name</label>
-                                <input {...register("name")} placeholder="enter your name" className="bg-gray-300 rounded-4xl py-4 px-6 w-[30vw]"/>
-                            </div>
-                        <div className="flex flex-col justify-center items-start gap-1">
-                            <label htmlFor="mobile" className="pl-6">Mobile No.</label>
-                            <input {...register("mobile")} placeholder="enter your mobile no." className="bg-gray-300 rounded-4xl py-4 px-6 w-[30vw]"/>
-                        </div>
-                        <div className="flex flex-col justify-center items-start gap-1">
-                            <label htmlFor="email" className="pl-6">Email ID</label>
-                            <input {...register("email")} placeholder="enter your email id" className="bg-gray-300 rounded-4xl py-4 px-6 w-[30vw]"/>
-                        </div>
-                        <div className="flex items-center">
-                            <span className="flex justify-start items-center gap-6">
-                                <label htmlFor="dob" className="pl-6">Date of Birth</label>
-                                <input type="date" {...register("dob")} className="bg-gray-300 rounded-3xl px-4 py-2"/>
-                            </span>
-                            <span className="flex justify-start items-center gap-6">
-                                <h1 className="pl-6">Gender</h1>
-                                <select className="border p-1 rounded" onChange={(event) => setGender(event.target.value)}>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
-                                </select>
-                            </span>
-                        </div>
-                </div>
-                    <div className="flex gap-30">
-                        { step > 1 &&
-                            <button name="back" className="flex justify-center items-center gap-1 bg-slate-800 text-white px-2 py-1 rounded cursor-pointer hover:bg-slate-700 transition-all duration-500">
-                                <img src={angleLeftArrow} alt="angleLeftArrow" className="w-5 h-5"/>
-                                <h1>Back</h1>
-                            </button>
+                <div className="flex flex-col items-center gap-5 w-[55vw] mt-[5vh]">
+                    <span>
+                        <h1 className="text-2xl font-semibold text-slate-950">{step === 1 ? "Personal Details" : step === 2 ? "Address Details" : ""}</h1>
+                        <h1 className="mt-[0.5vh] text-slate-950">{step === 1 ? "Enter your personal information as per official records." : step === 2 ? "Provide your current residential address." : ""}</h1>
+                    </span>
+                    <form onSubmit={handleSubmit(submitApplication)} className="flex flex-col items-center gap-8 rounded-2xl py-3 bg-gray-100 shadow-lg w-[38vw]">
+                        { step === 1 ?
+                            <div className="flex flex-col gap-5">
+                                <div className="flex flex-col justify-center items-start gap-1">
+                                    <label htmlFor="name" className="pl-6">Name</label>
+                                    <input {...register("name")} placeholder="enter your name" className="bg-gray-300 rounded-4xl py-4 px-6 w-[30vw]"/>
+                                </div>
+                                <div className="flex flex-col justify-center items-start gap-1">
+                                    <label htmlFor="mobile" className="pl-6">Mobile No.</label>
+                                    <input {...register("mobile")} placeholder="enter your mobile no." className="bg-gray-300 rounded-4xl py-4 px-6 w-[30vw]"/>
+                                </div>
+                                <div className="flex flex-col justify-center items-start gap-1">
+                                    <label htmlFor="email" className="pl-6">Email ID</label>
+                                    <input {...register("email")} placeholder="enter your email id" className="bg-gray-300 rounded-4xl py-4 px-6 w-[30vw]"/>
+                                </div>
+                                <div className="flex items-center">
+                                    <span className="flex justify-start items-center gap-6">
+                                        <label htmlFor="dob" className="pl-6">Date of Birth</label>
+                                        <input type="date" {...register("dob")} className="bg-gray-300 rounded-3xl px-4 py-2"/>
+                                    </span>
+                                    <span className="flex justify-start items-center gap-6">
+                                        <h1 className="pl-6">Gender</h1>
+                                        <select className="border p-1 rounded" onChange={(event) => setGender(event.target.value)}>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </span>
+                                </div>
+                            </div> : step === 2 ?
+                            <div className="flex flex-col gap-5">
+                                <div className="flex flex-col justify-center items-start gap-1">
+                                    <label htmlFor="fullAddress" className="pl-6">Full Address</label>
+                                    <textarea {...register("fullAddress")} rows={2} className="bg-gray-300 rounded-full py-4 px-6 w-[30vw]"/>
+                                </div>
+                                <div className="flex flex-col justify-center items-center gap-1">
+                                    <label htmlFor="city" className="pl-6">City</label>
+                                    <input {...register("city")} placeholder="enter your city" className="bg-gray-300 rounded-4xl py-4 px-6 w-[30vw]"/>
+                                </div>
+                                <div className="flex flex-col justify-center items-start gap-1">
+                                    <label htmlFor="state">State</label>
+                                </div>
+                            </div> :
+                            <div></div>
                         }
-                        <button name="next" className="flex justify-center items-center gap-1 bg-slate-800 text-white px-2 py-1 rounded cursor-pointer hover:bg-slate-700 transition-all duration-500">
-                            <h1>Next</h1>
-                            <img src={angleRightArrow} alt="angleRightArrow" className="w-5 h-5"/>
-                        </button>
-                    </div>
-                </form>
+                        <div className="flex gap-30">
+                            { step > 1 &&
+                                <button name="back" className="flex justify-center items-center gap-1 bg-slate-800 text-white px-2.5 py-1.5 rounded cursor-pointer hover:bg-slate-700 transition-all duration-500">
+                                    <img src={angleLeftArrow} alt="angleLeftArrow" className="w-5 h-5"/>
+                                    <h1>Back</h1>
+                                </button>
+                            }
+                            <button name="next" className="flex justify-center items-center gap-1 bg-slate-800 text-white px-2.5 py-1.5 rounded cursor-pointer hover:bg-slate-700 transition-all duration-500">
+                                <h1>Next</h1>
+                                <img src={angleRightArrow} alt="angleRightArrow" className="w-5 h-5"/>
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

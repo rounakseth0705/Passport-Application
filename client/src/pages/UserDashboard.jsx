@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import fileIcon from "../assets/file.svg";
 import { ApplicationContext } from "../context/ApplicationContext.jsx";
 import { useNavigate } from "react-router-dom";
+import { useRef } from "react";
 
 const UserDashboard = () => {
     const { user, logout } = useContext(UserContext);
@@ -14,10 +15,7 @@ const UserDashboard = () => {
     const [hours, setHours] = useState(String(new Date().getHours()).padStart(2,"0"));
     const [minutes, setMinutes] = useState(String(new Date().getMinutes()).padStart(2,"0"));
     const [seconds, setSeconds] = useState(String(new Date().getSeconds()).padStart(2,"0"));
-    const [meridiem, setMeridiem] = useState(getMeridiem());
-    function getMeridiem() {
-
-    }
+    const meridiem = useRef(hours < 12 ? "AM" : "PM");
     useEffect(() => {
         const interval = setInterval(() => {
             setHours(String(new Date().getHours()).padStart(2,"0"));
@@ -34,7 +32,7 @@ const UserDashboard = () => {
                 <h1>Welcome back, {user?.name.split(" ")[0]}</h1>
                 <span className="flex justify-center items-center gap-3 md:ml-[1vw] md:gap-1 lg:gap-3 lg:ml-0">
                     <img src={clockIcon} alt="clockIcon" className="w-6 h-6 md:w-8 md:h-8 lg:w-6 lg:h-6"/>
-                    <h1 className="md:text-2xl lg:text-base">{new Date().toLocaleString("en-US", { weekday: "long" })}, {new Date().toLocaleString("en-US", { month: "long" })} {String(new Date().getDate()).padStart(2,"0")} {new Date().getFullYear()}, {hours}:{minutes}:{seconds} {meridiem}</h1>
+                    <h1 className="md:text-2xl lg:text-base">{new Date().toLocaleString("en-US", { weekday: "long" })}, {new Date().toLocaleString("en-US", { month: "long" })} {String(new Date().getDate()).padStart(2,"0")} {new Date().getFullYear()}, {hours}:{minutes}:{seconds} {meridiem.current}</h1>
                 </span>
                 <button onClick={logout} className="cursor-pointer py-2 px-5 rounded-3xl text-white bg-slate-800 hover:bg-slate-700 transition-all duration-500 ease-in-out">Logout</button>
             </div>
